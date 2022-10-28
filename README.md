@@ -1,4 +1,4 @@
-# Homework 6 - Part A
+# Homework 6 - Part B
 
 ## Overview
 
