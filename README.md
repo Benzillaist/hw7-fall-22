@@ -9,8 +9,6 @@ During this project, you will implement a _fluent filter_ for a list of Pokemon.
 After completing this project, students should be able to:
 
 - Program asynchronous functions using the `Promise` interface
-- Know what is, and how to implement, a fluent interface
-- Understand what a JSON is and why it is used
 - Understand the basics of fetching information across the web
 
 ## Student Expectations
@@ -21,35 +19,6 @@ Students will be graded on:
 - How they design unit-tests for all relevant functions and methods
 
 ## Getting Started
-
-### JSON
-
-JavaScript Object Notation (**JSON**) is a syntax for representing objects, arrays, numbers, strings, booleans, and `null` as a complete (single) string. Imagine you create a large object with many members and values:
-
-```js
-{
-  orders: [
-    {
-      orderId: 1234,
-      sandwiches: [
-        {
-          bread: "whole wheat",
-          vegetables: [],
-          meat: ["turkey"],
-          isToasted: false,
-        },
-        /* more sandwiches ... */
-      ],
-      total: 13.4,
-    },
-    /* more orders */
-  ];
-}
-```
-
-This object lives somewhere in memory - how might we transport it to another computer or save this information to the disk? Before doing so, we have to convert all this information into a syntax that **can be** sent across a network or saved to a file.
-
-JSON is a widely used for this purpose. It is easy for humans to read and write, plus it is not difficult to write a program that converts run-time data into JSON and JSON into run-time data.
 
 ### APIs and Fetching
 
@@ -101,83 +70,6 @@ Open up the following URL (<https://pokeapi.co/api/v2/pokemon?limit=-1>) in your
 We have provided two functions for you to use.
 
 `fetchPokemonList` will fetch the URL above, then convert the JSON string into a JavaScript object, then resolve with the
-
-### Fluent Design
-
-An object's interface is **fluent** if various methods in that interface return the same type of that object. Fluent design can make our code more declarative, which is easier to read and understand. Consider the following example:
-
-```js
-class Sandwich {
-  // constructor (
-  //  bread: string,
-  //  vegetable: string[],
-  //  meat: string[],
-  //  condiments: string[],
-  //  isToasted: boolean
-  // )
-  constructor(bread, vegetables, meat, condiments, isToasted) {}
-}
-```
-
-If you look at the constructor of the `Sandwich` class, there are a lot of parameters. The order of these parameters might not be obvious.
-
-```js
-const mySandwich = new Sandwich("whole wheat", [], [], [], false);
-```
-
-Without prior knowledge of the `constructor` for the `Sandwich` class, it is hard to determine what the empty arrays and `false` mean. It would be nice if there way a more descriptive way of creating `mySandwich`. Using fluent design, we can declare a fluent builder to do so.
-
-```js
-class SandwichBuilder {
-  // The interface of Sandwich builder is fluent
-  constructor() {
-    // Constructor does not accept arguments, initializes default values
-    this.bread = "no bread";
-    this.vegetables = [];
-    this.meat = [];
-    this.isToasted = false;
-  }
-  // withBread(b: string): SandwichBuilder
-  withBread(b) {
-    // each method modifies instance variables, returns "this"
-    this.bread = b;
-    return this;
-  }
-  // addVegetable(v: string): SandwichBuilder
-  addVegetable(v) {
-    this.vegetables.push(v);
-    return this;
-  }
-  // addMeat(m: string): SandwichBuilder
-  addMeat(m: string) {
-    this.meat.push(m);
-    return this;
-  }
-  // makeToasted(): SandwichBuilder
-  makeToasted() {
-    this.isToasted = true;
-    return this;
-  }
-
-  build() {
-    return new Sandwich(this.bread, this.vegetables, this.meat, this.isToasted);
-  }
-}
-```
-
-Notice how each method (other than `build`) returns `this`. This allows us to chain method calls together to describe what our sandwich is made of.
-
-```js
-const mySandwich = new SandwichBuilder() // Make a SandwichBuilder, not a Sandwich
-  .withBread("whole wheat") // My sandwich will have whole wheat bread
-  .addVegetable("lettuce") // My sandwich will have lettuce
-  .addVegetable("tomato") // My sandwich will have tomato
-  .addMeat("bacon") // My sandwich will have bacon
-  .addCondiment("mayonnaise") // My sandwich will have mayonnaise
-  .build(); // Pass all arguments to the Sandwich class (Compose the sandwich)
-```
-
-Without any prior knowledge of the `Sandwich` class, a reader can deduce that `mySandwich` has three vegetables and a single meat/condiment. As you will see, there are other applications of fluent design that make code easier to read.
 
 - Explain:
 
