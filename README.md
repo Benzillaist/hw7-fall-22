@@ -73,8 +73,6 @@ We have provided two functions for you to use.
 
 - Explain:
 
-  - Fluent design
-  - JSON
   - APIs
   - Fetching
 
@@ -147,11 +145,11 @@ Use `mapArrayAsync`.
 
 These methods should push functions into various instance variables. These instance variable should then be used in `fetch` to determine if an entry is kept in the output. You will need to implement the constructor to initialize these variables.
 
-3. Implement `hasStatGreaterThan`, `hasStatLessThan`, `hasType` (sync filters)
+3. Implement `fetch`
 
-4. Implement `inGeneration`, `encounteredIn` (async filters)
+4. Implement `hasStatGreaterThan`, `hasStatLessThan`, `hasType` (sync filters)
 
-5. Implement `fetch`
+5. Implement `inGeneration`, `encounteredIn` (async filters)
 
 # OLD NOTES FOR REFERENCE
 
