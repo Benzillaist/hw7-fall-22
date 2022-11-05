@@ -115,57 +115,50 @@ makeSearchURL("你好");
 
 More documentation, and examlpes, for the `URL` and `URLSearchParams` class can be found in the [Node.js standard library documentation](https://nodejs.org/dist/latest-v18.x/docs/api/url.html).
 
-### Application Programming Interface
+### Third-party APIs
 
-An Application Programming Interface (**API**) is the interface exposed by an application for other pieces of software to interact with. Web APIs (APIs on the world wide web) are a popular mechanism for exposing information and providing functionality to websites or other programs. A lot of websites are just an interface for interacting with a series of web APIs.
+Source: [MDN - Instroduction to web APIs](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Introduction)
 
-In this homework, you will be interacting with a few web APIs that provide information about universities, longitude and latitude, and weather data.
+An Application Programming Interface (**API**) is the interface exposed by an application for other pieces of software to interact with. Web APIs (APIs on the world wide web) are a popular mechanism for exposing information and providing functionality to websites or other programs. A lot of websites are just an interface for interacting with a series of web APIs. These interfaces allow developers to create complex programs without doing all the heavly lifting.
 
-These web APIs will return unformatted JSON results. It is recommended that you either use Firefox or install [this chrome extension](https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa) so the results become readable.
+In this homework, you will be interacting with a few third-party web APIs that provide information about universities, longitude and latitude, and weather data. These web APIs have various URL parameters that provide different functionality.
+
+These web APIs will return unformatted JSON results. It is recommended that you either use Firefox or install [this chrome extension](https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa) so the results become readable. As an example:
+
+![Raw JSON](./raw-json.png)
+
+Could look like this instead:
+
+![Formatted JSON](./formatted-json.png)
+
+You will be provided with URLs to various APIs and the parameters they accept. It is your job to research these APIs further, come up with examples, and understand their behavior.
 
 ### Fetching Resources
 
-**Fetching** is the process of retrieving the content from a URL across the internet. Before your search results are displayed, your browser first needs to fetch the contents of the page located at the URL.
+**Fetching** is the process of retrieving the content from a URL across the web. Before your search results are displayed, your browser first needs to fetch the contents of the page located at the URL.
 
-As you might imagine, this process is done asynchronously. Your browser does not wait for a fetch request to return before it allows you to do anything. It will fetch the requested page, allow you to switch tabs or type in other queries, and **then** after the fetch resolves, it will display the information on your screen.
+As you might imagine, this process is done asynchronously. Your browser does not wait for a fetch request to return before it allows you to do anything. It will fetch the requested page, allow you to switch tabs or type in other queries, and **then** after the fetch resolves it will display the content.
 
-You will be using the `fetch` function to fetch, then parse, JSON data.
+You will be using the `fetch` function to fetch, then parse, JSON data for the APIs you query.
 
 ```js
 import fetch from "node-fetch";
 
-fetch("https://geocode.maps.co/search?q=UMass+Amherst")
-  .then((res) => res.json())
-  .then((json) =>
-    json.length > 0
-      ? Promise.resolve(json[0])
-      : Promise.reject("No results found.")
+fetch("https://geocode.maps.co/search?q=University+of+Massachusetts+Amherst") // fetch the /search resource with a q parameter
+  .then((response) => response.json()) // parse the result to a json
+  .then(
+    (json) =>
+      json.length > 0 // This API returns an array of objects
+        ? Promise.resolve(json[0]) // Resolve with the first object if present
+        : Promise.reject(new Error("No results found.")) // Reject if nothing is present
   )
   .then((data) =>
     console.log(
       `UMass Amherst is located around latitude ${data.lat} and longitude ${data.lon}.`
     )
   )
-  .catch((err) => console.log("Unable to retrieve location data: " + err));
+  .catch((err) => console.log("Unable to retrieve location data: " + err)); // Handle any errors that happened
 ```
-
-### File I/O
-
-Similar to fetching, inputting from and outputting to a file might be expensive. Our programs may not need to wait for an operation to complete before it does something else. You will be using an asynchronous interface for interacting with files.
-
-You will be using `readFile` and `writeFile` in the `fs/promises` library. Here is some example usage:
-
-```js
-import { writeFile, readFile } from "node:fs/promises";
-
-writeFile("./myFile.txt", "Hello, world!\n") // Read from a file
-  .then(() => console.log("Wrote to my file.")) // Fulfils with nothing
-  .then(() => readFile("./myFile.txt", { encoding: "utf8" })) // Read from the same file
-  .then((data) => console.log("Read: " + data)) // Print its output: Hello, world!
-  .catch(() => console.error("Failed!"));
-```
-
-When you write to a file (using `writeFile`), it will default to using UTF-8 to encode the JavaScript string into a format that can be written to a file.
 
 ## Overview
 
