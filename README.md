@@ -113,15 +113,17 @@ makeSearchURL("你好");
 // -> https://www.google.com/search?q=%E4%BD%A0%E5%A5%BD
 ```
 
-### APIs
+More documentation, and examlpes, for the `URL` and `URLSearchParams` class can be found in the [Node.js standard library documentation](https://nodejs.org/dist/latest-v18.x/docs/api/url.html).
+
+### Application Programming Interface
 
 An Application Programming Interface (**API**) is the interface exposed by an application for other pieces of software to interact with. Web APIs (APIs on the world wide web) are a popular mechanism for exposing information and providing functionality to websites or other programs. A lot of websites are just an interface for interacting with a series of web APIs.
 
-In this homework, you will be interacting with a few web APIs that provide information about universities, longitude and latitude data, and weather data.
+In this homework, you will be interacting with a few web APIs that provide information about universities, longitude and latitude, and weather data.
 
 These web APIs will return unformatted JSON results. It is recommended that you either use Firefox or install [this chrome extension](https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa) so the results become readable.
 
-### Fetching
+### Fetching Resources
 
 **Fetching** is the process of retrieving the content from a URL across the internet. Before your search results are displayed, your browser first needs to fetch the contents of the page located at the URL.
 
