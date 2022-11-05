@@ -27,7 +27,8 @@ hw6-part-b-fall-22/
   - [URLs and Parameters](#urls-and-parameters)
   - [Third-party APIs](#third-party-apis)
   - [Fetching Resources](#fetching-resources)
-- [Overview](#overview)
+- [File Overview](#file-overview)
+  - [`npm` commands](#npm-commands)
 - [Programming Tasks](#programming-tasks)
   - [`writeToJSONFile`](#1-writetojsonfile)
   - [`readFromJSONFile`](#2-readfromjsonfile)
@@ -65,7 +66,7 @@ https://www.google.com/maps
 https://www.google.com/search?q=how+to+exit+vim
 ```
 
-URLs have a specefic structure, which tell both the browser, and the eventual web server, what the request means.
+URLs have a specific structure, which tell both the browser, and the eventual web server, what the request means.
 
 ![URL](./url.png)
 
@@ -73,7 +74,7 @@ URLs have a specefic structure, which tell both the browser, and the eventual we
   - The web uses `https` or `http`
 - **The authority** documents where server that will process our request lives
   - The domain maps to a number (called the IP address) that is used to find the web server on the internet
-- **The path** describes which resource we want to retrive
+- **The path** describes which resource we want to retrieve
   - When the web server first gets the request it will use the path to find the resource we are requesting
 - **The parameters** describe how we want to query or provide input for that resource
   - The ask of the URL
@@ -87,7 +88,7 @@ Looking more closely, at the URLs above:
 - `https://www.google.com/maps` is a URL requesting the resource `/maps` at `www.google.com`
 - `https://www.google.com/search?q=how+to+exit+vim` is a URL requesting the resource `/search` at `www.google.com` providing a parameter `q` (short for query) with a value `how+to+exit+vim`
 
-If you notice, the value of the `q` parameter looks a little weird. There are some characters that cannot be part of a URL (for examlpe, a space) and some that are reserved for a specific purpose (like `&` separating paramaters). To support passing these characters to parameters, strings first need to be put into a format that can be recognized as a URL. This is called [percent encoding](https://en.wikipedia.org/wiki/Percent-encoding). Luckly, there is a class in the Node.js standard library to handle all of that for you.
+If you notice, the value of the `q` parameter looks a little weird. There are some characters that cannot be part of a URL (for example, a space) and some that are reserved for a specific purpose (like `&` separating parameters). To support passing these characters to parameters, strings first need to be put into a format that can be recognized as a URL. This is called [percent encoding](https://en.wikipedia.org/wiki/Percent-encoding). Luckly, there is a class in the Node.js standard library to handle all of that for you.
 
 During this homework, you will construct URLs with specific parameters using the `URL` class in the Node.js standard library. As an example, if I wanted to make a function that constructs a Google search URL from a given query, I would write:
 
@@ -110,19 +111,19 @@ makeSearchURL("vim tutorial youtube");
 // -> https://www.google.com/search?q=vim+tutorial+youtube
 makeSearchURL("2022 election results");
 // -> https://www.google.com/search?q=2022+election+results
-makeSearchURL("how to write the & symbol");
-// -> https://www.google.com/search?q=how+to+write+the+%26+symbol
+makeSearchURL("How to write the & symbol?");
+// -> https://www.google.com/?q=How+to+write+the+%26+symbol%3F
 makeSearchURL("你好");
 // -> https://www.google.com/search?q=%E4%BD%A0%E5%A5%BD
 ```
 
-More documentation, and examlpes, for the `URL` and `URLSearchParams` class can be found in the [Node.js standard library documentation](https://nodejs.org/dist/latest-v18.x/docs/api/url.html).
+More documentation, and examples, for the `URL` and `URLSearchParams` class can be found in the [Node.js standard library documentation](https://nodejs.org/dist/latest-v18.x/docs/api/url.html).
 
 ### Third-party APIs
 
 Source: [MDN - Instroduction to web APIs](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Introduction)
 
-An Application Programming Interface (**API**) is the interface exposed by an application for other pieces of software to interact with. Web APIs (APIs on the world wide web) are a popular mechanism for exposing information and providing functionality to websites or other programs. A lot of websites are just an interface for interacting with a series of web APIs. These interfaces allow developers to create complex programs without doing all the heavly lifting.
+An Application Programming Interface (**API**) is the interface exposed by an application for other pieces of software to interact with. Web APIs (APIs on the world wide web) are a popular mechanism for exposing information and providing functionality to websites or other programs. A lot of websites are just an interface for interacting with a series of web APIs. These interfaces allow developers to create complex programs without doing all the heavy lifting.
 
 In this homework, you will be interacting with a few third-party web APIs that provide information about universities, longitude and latitude, and weather data. These web APIs have various URL parameters that provide different functionality.
 
@@ -163,22 +164,13 @@ fetch("https://geocode.maps.co/search?q=University+of+Massachusetts+Amherst") //
   .catch((err) => console.log("Unable to retrieve location data: " + err)); // Handle any errors that happened
 ```
 
-## Overview
-
-### JSDoc
-
-All relevant functions have been documented using [JSDoc](https://jsdoc.app/). JSDoc is a standard for JavaScript comments on classes, methods, functions, and variables. A lot of methods specify input type and variant ("A string that looks like this"). As an example:
-
-```js
-
-```
-
-When implementing these methods, you may assume that the input follows these specifications. For this project, worry less about input, and more about a sound implementation.
+## File Overview
 
 ### `npm` Commands
 
 - `npm start`: Run the `./src/main.js` file
-- `npm test`: Run the `*.test.js` files
+- `npm test`: Run the series of `*.test.js` files
+- `npm prettier:fix`: Run the command line tool to format your code
 
 ## Resources
 
@@ -191,7 +183,79 @@ When implementing these methods, you may assume that the input follows these spe
 
 ## Programming Tasks
 
-### 1. `writeToJSONFile`
+### 1. `fetchLongitudeAndLatitude`
+
+Write a function, inside of `TODO.js`, with the following type signature:
+
+```ts
+fetchLongitudeAndLatitude(query: string): Promise<{ lon: number, lat: number }>
+```
+
+This function should take in a query string and return a `Promise` that fulfils with an object. The object should have a field `lon` and a field `lat` - corresponding to the longitude and latitude result of the query. If there are multiple results for a query, pick the first one. If there are no results for a location (the result array is empty), then the promise should reject with an error identical to the one below:
+
+```js
+new Error("No results found for query.");
+```
+
+Use the following API to <https://geocode.maps.co/search?q=query> retrieve your results. The base URL should be "https://geocode.maps.co/search" and there should be one URL search parameter "q. This API returns an array of objects containing a `lon` and `lat` field.
+
+See the [getting started section on queries](#urls-and-parameters) if you are confused. Use the `Number` function to convert to a number if needed.
+
+### 2. `fetchWeatherData`
+
+Write a function, inside of `TODO.js`, with the following type signature:
+
+```ts
+fetchCurrentWeather(longitude: number, latitude: number): Promise<{ time: string[], temperature_2m: number[] }>
+```
+
+This function should take in a longitude and latitude and return a `Promise` that fulfils with an object. The object should have two number arrays called `time` and `temperature_2m`. The `time` field should be an array of times and the `temperature_2m` should be an array of corresponding temperature measurements.
+
+Use the <https://api.open-meteo.com/v1/forecast> API to retrieve your result. It has `latitude` and `longitude` parameters. You should set the `hourly` parameter to `temperature_2m`, and the `temperature_unit` parameter to `fahrenheit`.
+
+### 3. `fetchUniversities`
+
+Write a function, inside of `TODO.js`, with the following type signature:
+
+```ts
+fetchUniversities(query: string): Promise<string[]>
+```
+
+This function should take in a query string and return a `Promise` that fulfils with an array of university names.
+
+Use the <http://universities.hipolabs.com/search> API to retrieve your result. It has a `name` parameter to search for a University of a given name.
+
+### 4. `fetchAverageUniversityWeather`
+
+Write a function with the following type signature:
+
+```ts
+fetchUniversityWeather(universityQuery: string): Promise<number>
+```
+
+This function should take in a query string and return a `Promise` that fulfils with the average temperature of all universities in the given `universityQuery` string.
+
+### 5. `fetchUMassWeather`
+
+Write a function with the following type signature:
+
+```ts
+fetchUMassWeather(): Promise<number>
+```
+
+This function should find the average temperature of all universities in the "University of Massachusetts" system. Use function 4 to compute your result.
+
+### 6. `fetchUCalWeather`
+
+Write a function with the following type signature:
+
+```ts
+fetchUCalWeather(): Promise<number>
+```
+
+This function should find the average temperature of all universities in the "University of California" system. Use function 4 to compute your result.
+
+### ?. `writeToJSONFile`
 
 Write a function, inside of `util.js`, with the following type signature:
 
@@ -204,7 +268,7 @@ This function should take in a file path (`path`) and some data (`data`), and re
 - [Documentation on `JSON.stringify`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify).
 - [Documentation on `writeFile` in the `fs/promises` library](https://nodejs.org/docs/latest-v17.x/api/fs.html#fspromisesreadfilepath-options).
 
-### 2. `readFromJSONFile`
+### ?. `readFromJSONFile`
 
 Write a function, inside of `util.js`, with the following type signature:
 
@@ -216,24 +280,6 @@ This function should take in a path to a file (assumed to be JSON data), and ret
 
 - [Documentation on `JSON.parse`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse).
 - [Documentation on `readFile` in the `fs/promises` library](https://nodejs.org/docs/latest-v17.x/api/fs.html#fspromisesreadfilepath-options).
-
-### 3. `fetchLongitudeAndLatitude`
-
-Write a function, inside of `TODO.js`, with the following type signature:
-
-```ts
-fetchLongitudeAndLatitude(query: string): Promise<{ lon: number, lat: number }>
-```
-
-This function should take in a query string and return a `Promise` that fulfils to an object. The object should have a field `lon` and a field `lat` - corresponding to the longitude and latitude result of the query. If there are multiple results for a query, pick first one. If there are no results for a location (the result array is empty), then the promise should reject with an error identical to the one below:
-
-```js
-new Error("No results found for query.");
-```
-
-Use the following API to <https://geocode.maps.co/search?q=QUERY+GOES+HERE> retrieve your results. The base URL should be "https://geocode.maps.co/search" and there should be one URL search parameter "q" where you assign the input to `fetchLongitudeAndLatitude`.
-
-See the [getting started section on queries](#urls-and-queries) if you are confused.
 
 ## Testing
 
@@ -280,6 +326,7 @@ Use what works best for you and your group members.
 
 If you see this comment, then the autograder has not been published. Please be patient.
 
+- Run `npm run prettier:fix`
 - Login to Gradescope
 - Open the assignment submission popup
   - Click the assignment
