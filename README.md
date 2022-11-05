@@ -48,26 +48,18 @@ Students will be graded on:
 
 ## Getting Started
 
-### APIs
-
-An Application Programming Interface (**API**) is the interface exposed by an application for other pieces of software to interact with. Web APIs (APIs on the world wide web) are a popular mechanism for exposing information and providing functionality to websites or other programs. A lot of websites are just an interface for interacting with a series of web APIs.
-
-In this homework, you will be interacting with a few web APIs that provide information about universities, longitude and latitude data, and weather data.
-
-These web APIs will return unformatted JSON results. It is recommended that you either use Firefox or install [this chrome extension](https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa) so the results become readable.
-
 ### URLs and Parameters
 
 Source: [MDN - What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL)
 
-A Uniform Resource Locater (URL) is an address for a unique resource on the web. It is what your browser uses to retrieve documents, webpages, JavaScript code, images, and other media and supporting files. Each valid URL first tells your browser where the machine processing the request lives. The rest of the URL is used by that machine to service the request and give back the corresponding resource.
+A Uniform Resource Locater (URL) is an address for a unique resource on the web. It is what your browser uses to retrieve documents, webpages, JavaScript code, images, and other media and supporting files. Each valid URL first tells your browser where the machine processing the request (the web server) lives. The rest of the URL is used by that web server to service the request and give back the corresponding resource.
 
 Here are some examples of URLs:
 
 ```text
 https://www.google.com/
 https://www.google.com/maps
-https://www.google.com/search?q=how+to+write+homework+instructions
+https://www.google.com/search?q=how+to+exit+vim
 ```
 
 URLs have a specefic structure, which tell both the browser, and the eventual web server, what the request means.
@@ -92,21 +84,21 @@ Looking more closely, at the URLs above:
 - `https://www.google.com/maps` is a URL requesting the resource `/maps` at `www.google.com`
 - `https://www.google.com/search?q=how+to+exit+vim` is a URL requesting the resource `/search` at `www.google.com` providing a parameter `q` (short for query) with a value `how+to+exit+vim`
 
-If you notice, the value of the `q` parameter looks a little weird. There are some characters that cannot be part of a URL (for examlpe, a space) and some that are reserved for a specific purpose (like `&` separating paramaters). To support passing these characters to parameters, strings first need to be put into a format that can be recognized as a URL. This is called [percent encoding](https://en.wikipedia.org/wiki/Percent-encoding).
+If you notice, the value of the `q` parameter looks a little weird. There are some characters that cannot be part of a URL (for examlpe, a space) and some that are reserved for a specific purpose (like `&` separating paramaters). To support passing these characters to parameters, strings first need to be put into a format that can be recognized as a URL. This is called [percent encoding](https://en.wikipedia.org/wiki/Percent-encoding). Luckly, there is a class in the Node.js standard library to handle all of that for you.
 
-During this homework, you will construct URLs with specific parameters using the `URL` class in Node.js standard library. As an example, if I wanted to make a function that constructs a Google search URL from a given query, I would write:
+During this homework, you will construct URLs with specific parameters using the `URL` class in the Node.js standard library. As an example, if I wanted to make a function that constructs a Google search URL from a given query, I would write:
 
 ```js
 import { URL } from "node:url"; // Import the URL class from the url library
 
 function makeSearchURL(query) {
   // Construct a new URL object using the resource URL
-  const searchURL = new URL("https://www.google.com/search"); 
+  const searchURL = new URL("https://www.google.com/search");
 
   // Access the searchParams field of the constructed url
   // The field holds an instance of the URLSearchParams
-  // Set the "q" parameter to the input
-  searchURL.searchParams.set("q", query);
+  // Add a new "q" parameter with the value of the functions input
+  searchURL.searchParams.append("q", query);
 
   return searchURL.toString(); // Return the resulting complete URL
 }
@@ -120,6 +112,14 @@ makeSearchURL("how to write the & symbol");
 makeSearchURL("你好");
 // -> https://www.google.com/search?q=%E4%BD%A0%E5%A5%BD
 ```
+
+### APIs
+
+An Application Programming Interface (**API**) is the interface exposed by an application for other pieces of software to interact with. Web APIs (APIs on the world wide web) are a popular mechanism for exposing information and providing functionality to websites or other programs. A lot of websites are just an interface for interacting with a series of web APIs.
+
+In this homework, you will be interacting with a few web APIs that provide information about universities, longitude and latitude data, and weather data.
+
+These web APIs will return unformatted JSON results. It is recommended that you either use Firefox or install [this chrome extension](https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa) so the results become readable.
 
 ### Fetching
 
