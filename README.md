@@ -40,7 +40,16 @@ hw6-part-b-fall-22/
 
 ## Description
 
+During this project, you will work as a group to complete an application that collects weather data for universities. You will query various web interfaces to collect information that will be either passed along as arguments to another interfaces or analyzed on its own.
+
 ## Learning Objectives
+
+Throughout this assignment, students will learn:
+
+- How to combine different third-party web services into a single asynchronous application
+- How to chain and create `Promise` objects
+- How to declare and interact with `URL` and `URLSearchParam` instances
+- How to input and output to files using the asynchronous interfaces???
 
 ## Student Expectations
 
