@@ -1,102 +1,186 @@
-# Homework 6 - Part B
+# Homework 6B: Promises and Web Programming
 
-## Overview
+## Notes
 
-During this project, you will implement a _fluent filter_ for a list of Pokemon. This filter will accept various conditions, then apply those conditions once the filtered list of Pokemon is requested. The filtering conditions may be on fields that are not readily available. These fields will first need to be _fetched_, before we can apply conditions on them.
+- Please download the homework from [here](./hw6-part-b-fall-22.zip)
+- This project will be using Node.js and VSCode
+  - Reference the [previous homeworks installation instructions](https://github.com/umass-compsci-220/hw6-part-a-fall-22/blob/main/INSTALLATION.md) if need help getting everything installed
+- After you download and unzip the project, open the folder one level higher than the `/src` folder in VSCode (File -> Open Folder)
+- Run `npm install` inside the terminal (Terminal -> New Terminal)
+- Your directory should look something like this:
+
+```txt
+hw6-part-b-fall-22/
+  node_modules/
+  src/
+    main.js
+  package-lock.json
+  package.json
+```
+
+## Index
+
+- [Description](#description)
+- [Learning Objectives](#learning-objectives)
+- [Student Expectations](#student-expectations)
+- [Getting Started](#getting-started)
+- [Overview](#overview)
+- [Programming Tasks](#programming-tasks)
+  - [`writeToJSONFile`](#1-writetojsonfile)
+  - [`readFromJSONFile`](#2-readfromjsonfile)
+  - [`fetchCourseIdsFromSubjectId`](#1-fetchcourseidsfromsubjectid)
+  - [`fetchCourseIdsFromSubjectId`](#1-fetchcourseidsfromsubjectid)
+  - [`fetchCourseIdsFromSubjectId`](#1-fetchcourseidsfromsubjectid)
+  - [`fetchCourseIdsFromSubjectId`](#1-fetchcourseidsfromsubjectid)
+- [Testing](#testing)
+
+## Description
 
 ## Learning Objectives
-
-After completing this project, students should be able to:
-
-- Program asynchronous functions using the `Promise` interface
-- Understand the basics of fetching information across the web
 
 ## Student Expectations
 
 Students will be graded on:
 
-- Their ability to complete the programming tasks documented below
+- Their ability to complete the [programming tasks](#programming-tasks) documented below
 - How they design unit-tests for all relevant functions and methods
+  - See the [testing section](#testing) for how asynchronous code is tested
 
 ## Getting Started
 
-### APIs and Fetching
+### APIs
 
-An Application Programming Interface (**API**) is the interface exposed by an application for other pieces of software to interact with. Web APIs (APIs on the internet) are a popular mechanism for exposing information and providing functionality to websites or other programs. Most modern websites are merely a graphical interface for interacting with a web API.
+An Application Programming Interface (**API**) is the interface exposed by an application for other pieces of software to interact with. Web APIs (APIs on the world wide web) are a popular mechanism for exposing information and providing functionality to websites or other programs. A lot of websites are just an interface for interacting with a series of web APIs.
 
-**Fetching** is the process of retrieving the content from a URL across the internet. Before your search results are displayed, your browser first needs to fetch the contents of the page located at the URL <https://www.google.com/search?q=baking+recipes>.
+In this homework, you will be interacting with a few web APIs that provide information about universities, longitude and latitude data, and weather data.
 
-As you might imagine, this process is asynchronous. Your browser does not wait for a fetch request to return before allows you to do anything. It will fetch the requested page, allow you to switch tabs or type in other queries, and **then** after the fetch resolves, it will display the information on your screen.
+These web APIs will return unformatted JSON results. It is recommended that you either use Firefox or install [this chrome extension](https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa) so the results become readable.
 
-In this homework, you will be interacting with a Web API that provides information about Pokemon.
+### URLs and Parameters
 
-Open up the following URL (<https://pokeapi.co/api/v2/pokemon?limit=-1>) in your browser. You will notice a long JSON string will be displayed. A formatted version of the results is shown below:
+Source: [MDN - What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL)
+
+A Uniform Resource Locater (URL) is an address for a unique resource on the web. It is what your browser uses to retrieve documents, webpages, JavaScript code, images, and other media and supporting files. Each valid URL first tells your browser where the machine processing the request lives. The rest of the URL is used by that machine to service the request and give back the corresponding resource.
+
+Here are some examples of URLs:
+
+```text
+https://www.google.com/
+https://www.google.com/maps
+https://www.google.com/search?q=how+to+write+homework+instructions
+```
+
+URLs have a specefic structure, which tell both the browser, and the eventual web server, what the request means.
+
+![URL](./url.png)
+
+- **The scheme** documents the protocol the network request should use
+  - The web uses `https` or `http`
+- **The authority** documents where server that will process our request lives
+  - The domain maps to a number (called the IP address) that is used to find the web server on the internet
+- **The path** describes which resource we want to retrive
+  - When the web server first gets the request it will use the path to find the resource we are requesting
+- **The parameters** describe how we want to query or provide input for that resource
+  - The ask of the URL
+  - What specifically is being search for?
+  - > `?key1=value1&key2=value2` are extra parameters provided to the Web server. Those parameters are a list of key/value pairs separated with the & symbol. The Web server can use those parameters to do extra stuff before returning the resource. Each Web server has its own rules regarding parameters, and the only reliable way to know if a specific Web server is handling parameters is by asking the Web server owner.
+- **The anchor** (irrelevant to this project) will tell the browser where specifically to scroll down to on the page
+
+Looking more closely, at the URLs above:
+
+- `https://www.google.com/` is a URL requesting the resource `/` at `www.google.com`
+- `https://www.google.com/maps` is a URL requesting the resource `/maps` at `www.google.com`
+- `https://www.google.com/search?q=how+to+exit+vim` is a URL requesting the resource `/search` at `www.google.com` providing a parameter `q` (short for query) with a value `how+to+exit+vim`
+
+If you notice, the value of the `q` parameter looks a little weird. There are some characters that cannot be part of a URL (for examlpe, a space) and some that are reserved for a specific purpose (like `&` separating paramaters). To support passing these characters to parameters, strings first need to be put into a format that can be recognized as a URL. This is called [percent encoding](https://en.wikipedia.org/wiki/Percent-encoding).
+
+During this homework, you will construct URLs with specific parameters using the `URL` class in Node.js standard library. As an example, if I wanted to make a function that constructs a Google search URL from a given query, I would write:
 
 ```js
-{
-  count: 1154, // The amonut of entries
-  next: null, // Ignore
-  previous: null, // Ignore
-  results: [ // An array of entries
-    { // A Pokemon entry
-      "name": "bulbasaur", // The name of a pokemon
-      "url": "https://pokeapi.co/api/v2/pokemon/1/" // The URL for details of this pokemon
-    },
-    {
-      "name": "ivysaur",
-      "url": "https://pokeapi.co/api/v2/pokemon/2/"
-    }
-    {
-      "name": "venusaur",
-      "url": "https://pokeapi.co/api/v2/pokemon/3/"
-    },
-    {
-      "name": "charmander",
-      "url": "https://pokeapi.co/api/v2/pokemon/4/"
-    },
-    {
-      "name": "charmeleon",
-      "url": "https://pokeapi.co/api/v2/pokemon/5/"
-    },
-    {
-      "name": "charizard",
-      "url": "https://pokeapi.co/api/v2/pokemon/6/"
-    },
-    // Hundreds of other Pokemon entries...
-  ]
+import { URL } from "node:url"; // Import the URL class from the url library
+
+function makeSearchURL(query) {
+  // Construct a new URL object using the resource URL
+  const searchURL = new URL("https://www.google.com/search"); 
+
+  // Access the searchParams field of the constructed url
+  // The field holds an instance of the URLSearchParams
+  // Set the "q" parameter to the input
+  searchURL.searchParams.set("q", query);
+
+  return searchURL.toString(); // Return the resulting complete URL
 }
+
+makeSearchURL("vim tutorial youtube");
+// -> https://www.google.com/search?q=vim+tutorial+youtube
+makeSearchURL("2022 election results");
+// -> https://www.google.com/search?q=2022+election+results
+makeSearchURL("how to write the & symbol");
+// -> https://www.google.com/search?q=how+to+write+the+%26+symbol
+makeSearchURL("你好");
+// -> https://www.google.com/search?q=%E4%BD%A0%E5%A5%BD
 ```
 
-We have provided two functions for you to use.
+### Fetching
 
-`fetchPokemonList` will fetch the URL above, then convert the JSON string into a JavaScript object, then resolve with the
+**Fetching** is the process of retrieving the content from a URL across the internet. Before your search results are displayed, your browser first needs to fetch the contents of the page located at the URL.
 
-- Explain:
+As you might imagine, this process is done asynchronously. Your browser does not wait for a fetch request to return before it allows you to do anything. It will fetch the requested page, allow you to switch tabs or type in other queries, and **then** after the fetch resolves, it will display the information on your screen.
 
-  - APIs
-  - Fetching
-
-- Explain:
-  - "You will be creating a series of asynchronous utility functions and a fluent filter for a pokemon api"
-  - Provided interface `fetchPokemonList` & `fetchPokemonDetail`
-  - You are not allowed to use any loops inside of the `FluentPokemonFilter`
-  - Example usage:
+You will be using the `fetch` function to fetch, then parse, JSON data.
 
 ```js
-const pokemonFilter = new FluentPokemonFilter()
-  .hasType("grass")
-  .hasStatGreaterThan("health", 15)
-  .hasStatLessThan("defense", 50)
-  .inGeneration("generation-i")
-  .encounteredIn("pallet-town-area"); // Provide conditions on the filter
+import fetch from "node-fetch";
+
+fetch("https://geocode.maps.co/search?q=UMass+Amherst")
+  .then((res) => res.json())
+  .then((json) =>
+    json.length > 0
+      ? Promise.resolve(json[0])
+      : Promise.reject("No results found.")
+  )
+  .then((data) =>
+    console.log(
+      `UMass Amherst is located around latitude ${data.lat} and longitude ${data.lon}.`
+    )
+  )
+  .catch((err) => console.log("Unable to retrieve location data: " + err));
 ```
 
+### File I/O
+
+Similar to fetching, inputting from and outputting to a file might be expensive. Our programs may not need to wait for an operation to complete before it does something else. You will be using an asynchronous interface for interacting with files.
+
+You will be using `readFile` and `writeFile` in the `fs/promises` library. Here is some example usage:
+
 ```js
-pokemonFilter
-  .fetch() // Fetch all data that matches the conditions
-  .then((list) => console.log(list))
-  .catch((rej) => console.error(rej));
+import { writeFile, readFile } from "node:fs/promises";
+
+writeFile("./myFile.txt", "Hello, world!\n") // Read from a file
+  .then(() => console.log("Wrote to my file.")) // Fulfils with nothing
+  .then(() => readFile("./myFile.txt", { encoding: "utf8" })) // Read from the same file
+  .then((data) => console.log("Read: " + data)) // Print its output: Hello, world!
+  .catch(() => console.error("Failed!"));
 ```
+
+When you write to a file (using `writeFile`), it will default to using UTF-8 to encode the JavaScript string into a format that can be written to a file.
+
+## Overview
+
+### JSDoc
+
+All relevant functions have been documented using [JSDoc](https://jsdoc.app/). JSDoc is a standard for JavaScript comments on classes, methods, functions, and variables. A lot of methods specify input type and variant ("A string that looks like this"). As an example:
+
+```js
+
+```
+
+When implementing these methods, you may assume that the input follows these specifications. For this project, worry less about input, and more about a sound implementation.
+
+### `npm` Commands
+
+- `npm start`: Run the `./src/main.js` file
+- `npm test`: Run the `*.test.js` files
 
 ## Resources
 
@@ -109,136 +193,103 @@ pokemonFilter
 
 ## Programming Tasks
 
-1. Implement the following function in `asyncUtil.js`
+### 1. `writeToJSONFile`
 
-```js
-// mapArrayAsync<T, U>(a: T[], f: T => Promise<U>): Promise<U[]>
-export function mapArrayAsync(a, f) {
-  // TODO
-}
+Write a function, inside of `util.js`, with the following type signature:
+
+```ts
+writeToJSONFile(path: string, data: object | object[]): Promise<void>
 ```
 
-This function will take in a generic array, `a`, and an asynchronous function `f`. It will create a new array populated with the resolutions of the calls to `f` on each element of `a`. The promise should reject if, at any point, `f` rejects.
+This function should take in a file path (`path`) and some data (`data`), and return a `Promise` that fulfils when the JSON representation of `data` is written to a file located at `path`. Use `writeFile` from the `fs/promises` library.
 
-It is similar to the [standard map method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map), but the transforming function is asynchronous.
+- [Documentation on `JSON.stringify`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify).
+- [Documentation on `writeFile` in the `fs/promises` library](https://nodejs.org/docs/latest-v17.x/api/fs.html#fspromisesreadfilepath-options).
 
-Use the [`Promise.all` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
+### 2. `readFromJSONFile`
 
-Use higher-order functions where applicable.
+Write a function, inside of `util.js`, with the following type signature:
 
-2. Implement the following function in `asyncUtil.js`
-
-```js
-// filterArrayAsync<T>(a: T[], f: (x: T) => Promise<boolean>): Promise<T[]>
-export function filterArrayAsync(a, f) {
-  // TODO
-}
+```ts
+readFromJSONFile(path: string): Promise<object | object[]>
 ```
 
-This function will take in a generic array, `a`, and an asynchronous function `f`. Creates a new array populated with the elements of `a` that resolved to `true` when passed to `f`. The promise should reject, if at any point, `f` rejects.
+This function should take in a path to a file (assumed to be JSON data), and return a `Promise` that fulfils with the parsed contents of the file. Use `readFile` from the `fs/promises` library.
 
-It is similar to the [standard filter method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter), but the condition is asynchronous.
+- [Documentation on `JSON.parse`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse).
+- [Documentation on `readFile` in the `fs/promises` library](https://nodejs.org/docs/latest-v17.x/api/fs.html#fspromisesreadfilepath-options).
 
-Use `mapArrayAsync`.
+### 3. `fetchLongitudeAndLatitude`
 
-**The following tasks below are methods of the `FluentPokemonFilter` class. You are to implement them using higher-order functions (including the ones written in steps 1 and 2). No loops are allowed.**
+Write a function, inside of `TODO.js`, with the following type signature:
 
-These methods should push functions into various instance variables. These instance variable should then be used in `fetch` to determine if an entry is kept in the output. You will need to implement the constructor to initialize these variables.
+```ts
+fetchLongitudeAndLatitude(query: string): Promise<{ lon: number, lat: number }>
+```
 
-3. Implement `fetch`
-
-4. Implement `hasStatGreaterThan`, `hasStatLessThan`, `hasType` (sync filters)
-
-5. Implement `inGeneration`, `encounteredIn` (async filters)
-
-# OLD NOTES FOR REFERENCE
-
-### Learning Objectives
-
-- fluent design
-- async programming
-
-### Student Expectations
-
-- complete the coding tasks
-- unit testing???
-  - how do we expect students to write unit test for this? (properties, mostly?)
-    - subset of expected set will still have all properties (how do they know they are not missing something)
-    - lots of data
-  - option of no private autograder tests???
-
-## Getting Started
-
-- use firefox or [this chrome extension](https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa) to view the [application program interface (api)](https://pokeapi.co/api/v2/pokemon)
-  - gain a general sense of what data is available
-  - information about pokemon, their abilities, stats, moves, descriptions, media appearances, and photos
-- the default route (<https://pokeapi.co/api/v2/pokemon>) is paginated (explain what that means)
-- we need to write a program that will procedurally filter data on each page
-  - these filtering functions will themselves be asynchronous, as they might need to fetch the information to filter on
-
-## Programming Tasks
-
-- utility code for them to use
-
-  - guides them in the direction of writing cleaner, better abstracted code
-  - see example below
-
-- a few basic single link filters (default route -> info page)
-
-  - all pokemon with more/less/equal weight/speed/health/attack/defense stats
-  - all pokemon with more/less/equal abilities/forms/game_indices (versions of the game they have been in)
-
-- some more nuanced filters (default route -> info page -> relationship page)
-  - all pokemon that can be found in location with name X
-    - fetch pokemon -> fetch location_area_encounters -> array.find(x.location_area.name === X)
-  - all pokemon that can be found in a location that has more/less/equal chance to encounter
-    - fetch pokemon -> fetch location_area_encounters -> array.some(x.encounter_details.some(y.chance ?? wanted chance))
-  - all pokemon that share an ability with a pokemon named X
-    - fetch pokemon -> fetch abilities (sometimes numerous) -> ability.pokemon.find(pokemon.pokemon.name === X)
-
-## Note
-
-- group project
-- async programming using promises
-- filtering pokemon data
-- fetching information (is async) & not all fields we want to filter on are on a single page
-- navigating across the website, fetching then filtering data across numerous pages, then producing a result
-- multi-part assignment
-
-  - lots of time to work, need to make sure they are completing various checkpoints
-
-- group size?? 3 students.
-- how are they collaborating??
-
-  - replit
-  - possible git/github part part
-
-- what code is provided?
-  - anything that does handles network requests
-    - fetchPage(url)
-  - code to navigate across pages (see main.js)
-    - need to change to procedural fetching rather than all at once
-  - some types so they can see how data is structured
+This function should take in a query string and return a `Promise` that fulfils to an object. The object should have a field `lon` and a field `lat` - corresponding to the longitude and latitude result of the query. If there are multiple results for a query, pick first one. If there are no results for a location (the result array is empty), then the promise should reject with an error identical to the one below:
 
 ```js
-const pokemonFilter = new FluentPokemonFilter()
-  .hasWeightLessThan(50) // Pushes a sync filter function to an instance variable
-  .foundInArea("pallet-town-area"); // Pushes a sync filter function to a different instance variable
-
-const pokemonResult = pokemonFilter.nextPage(); // given??
-// return async fetch to default route
-// .then(pokemon => {
-//   return asyncFilter(pokemon, (p) => {         // IDEA: have them implement an async filter for an array
-//     looks at all stored filters
-//     do sync filters
-//     if all sync filters pass
-//       if no filters on cross-rel. fields
-//         ret Promise.resolve(true)
-//       else
-//         fetch related info
-//           .then(info => Promise.resolve(cross-relationship-filters.every(info)))
-//     else
-//        Promise.resolve(false)
-//    });
-// });
+new Error("No results found for query.");
 ```
+
+Use the following API to <https://geocode.maps.co/search?q=QUERY+GOES+HERE> retrieve your results. The base URL should be "https://geocode.maps.co/search" and there should be one URL search parameter "q" where you assign the input to `fetchLongitudeAndLatitude`.
+
+See the [getting started section on queries](#urls-and-queries) if you are confused.
+
+## Testing
+
+Testing asynchronous code is a little different from testing synchronous code. One way or another, the testing framework needs to know that there is pending work to be done. **We tell the testing framework we are still "doing" work by returning a `Promise` in the test function rather than returning nothing**.
+
+As an example, one of the given tests returns a `Promise` that has a handler that does the assertions.
+
+```js
+test("fetchLongitudeAndLatitude follows type specification", () => {
+  return fetchLongitudeAndLatitude("University of Massachusetts Amherst").then(
+    (result) => {
+      assert("lon" in result); // Assert the "lon" field is present
+      assert("lat" in result); // Assert the "lat" field is present
+      assert(Object.keys(result).length === 2); // Assert there are only two keys in the object
+
+      assert(typeof result.lon === "number"); // Assert that the lon value is a number
+      assert(typeof result.lat === "number"); // Assert that the lat value is a number
+    }
+  );
+});
+```
+
+Your tests should follow this similar pattern (`return foo().then(result => {/* assertions */ })`). Alternatively, you could use `async`/`await` syntax.
+
+```js
+test("fetchLongitudeAndLatitude follows type specification", async () => {
+  const result = await fetchLongitudeAndLatitude(
+    "University  of Massachusetts Amherst"
+  );
+
+  assert(typeof result === "object"); // Assert the result is an object
+  assert("lon" in result); // Assert the "lon" field is present
+  assert("lat" in result); // Assert the "lat" field is present
+  assert(Object.keys(result).length === 2); // Assert there are only two keys in the object
+
+  assert(typeof result.lon === "number"); // Assert that the lon value is a number
+  assert(typeof result.lat === "number"); // Assert that the lat value is a number
+});
+```
+
+Use what works best for you and your group members.
+
+## Submitting
+
+If you see this comment, then the autograder has not been published. Please be patient.
+
+- Login to Gradescope
+- Open the assignment submission popup
+  - Click the assignment
+- Open your file explorer and navigate to the folder of the project
+  - This is the folder that immediately contains: `node_modules`, `src/`, `package.json`, `package-lock.json`
+- Drag and drop the `src/` folder into the submission box
+- Click upload
+
+Your submission window should look like the following. **It should not contain any more or any less files.**
+
+![Submission](./submission.png)
