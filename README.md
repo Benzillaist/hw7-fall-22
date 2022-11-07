@@ -1,5 +1,9 @@
 # Homework 6B: Promises and Web Programming
 
+- TODO
+  - Make project zip
+  - Final read through
+  
 ## Notes
 
 - Please download the homework from [here](./hw6-part-b-fall-22.zip)
