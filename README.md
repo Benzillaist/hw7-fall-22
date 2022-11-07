@@ -1,20 +1,16 @@
 # Homework 7: Promises and Web Programming
 
-- TODO
-  - Final read through
-  - Add collaboration documentation with liveshare
-
 ## Notes
 
 - Please download the homework from [here](./projects.zip)
 - This project will be using Node.js and VSCode
-  - Reference the [previous homeworks installation instructions](https://github.com/umass-compsci-220/hw6-part-a-fall-22/blob/main/INSTALLATION.md) if need help getting everything installed
+  - Reference the [previous homeworks installation instructions](https://github.com/umass-compsci-220/hw6-fall-22/blob/main/INSTALLATION.md) if need help getting everything installed
 - After you download and unzip the project, open the folder one level higher than the `/src` folder in VSCode (File -> Open Folder)
 - Run `npm install` inside the terminal (Terminal -> New Terminal)
 - Your directory should look something like this:
 
 ```txt
-hw6-part-b-fall-22/
+hw7-fall-22/
   node_modules/
   src/
     main.js
@@ -189,13 +185,30 @@ fetch("https://spire-api.melanson.dev/instructors/?search=marius") // fetch the 
 
 ## File Overview
 
-Each major function has its own individual file and corresponding testing file.
+Each major function has its own individual file and corresponding testing file. Please use them accordingly.
 
 ### `npm` Commands
 
 - `npm start`: Run the `./src/main.js` file
 - `npm test`: Run the series of `*.test.js` files
 - `npm prettier:fix`: Run the command line tool to format your code
+
+If would just like to run a single test file, than you can use the command:
+
+```js
+node --experimental-vm-modules node_modules/jest/bin/jest.js ./src/fetchCurrentWeather.test.js
+```
+
+Which is pretty long, you are are invited to add an additional script in `package.json`:
+
+```json
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "start": "node ./src/main.js",
+    "prettier:fix": "npx prettier --write ./src/**/*.js",
+    "test:weather": "node --experimental-vm-modules node_modules/jest/bin/jest.jsnode ./node_modules/jest ./src/fetchCurrentWeather.test.js",
+  },
+```
 
 ## Resources
 
