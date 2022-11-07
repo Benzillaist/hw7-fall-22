@@ -1,13 +1,12 @@
 # Homework 7: Promises and Web Programming
 
 - TODO
-  - Make project zip
   - Final read through
   - Add collaboration documentation with liveshare
 
 ## Notes
 
-- Please download the homework from [here](./hw6-part-b-fall-22.zip)
+- Please download the homework from [here](./projects.zip)
 - This project will be using Node.js and VSCode
   - Reference the [previous homeworks installation instructions](https://github.com/umass-compsci-220/hw6-part-a-fall-22/blob/main/INSTALLATION.md) if need help getting everything installed
 - After you download and unzip the project, open the folder one level higher than the `/src` folder in VSCode (File -> Open Folder)
@@ -255,7 +254,7 @@ fetchUniversities(query: string): Promise<string[]>
 
 This function should take in a query string and return a `Promise` that fulfils with an array of university names.
 
-Use the <http://universities.hipolabs.com/search> API to retrieve your result. It has a `name` parameter to search for a University of a given name.
+Use the <http://universities.hipolabs.com/search> API to retrieve your result. It has a `name` parameter to search for universities with a similar name.
 
 ### 4. `fetchAverageUniversityWeather`
 
