@@ -30,31 +30,39 @@ hw6-part-b-fall-22/
 - [File Overview](#file-overview)
   - [`npm` commands](#npm-commands)
 - [Programming Tasks](#programming-tasks)
-  - [`writeToJSONFile`](#1-writetojsonfile)
-  - [`readFromJSONFile`](#2-readfromjsonfile)
-  - [`fetchCourseIdsFromSubjectId`](#1-fetchcourseidsfromsubjectid)
-  - [`fetchCourseIdsFromSubjectId`](#1-fetchcourseidsfromsubjectid)
-  - [`fetchCourseIdsFromSubjectId`](#1-fetchcourseidsfromsubjectid)
-  - [`fetchCourseIdsFromSubjectId`](#1-fetchcourseidsfromsubjectid)
+  - [`fetchLongitudeAndLatitude`](#1-fetchlongitudeandlatitude)
+  - [`fetchWeatherData`](#2-fetchweatherdata)
+  - [`fetchUniversities`](#3-fetchuniversities)
+  - [`fetchAverageUniversityWeather`](#4-fetchaverageuniversityweather)
+  - [`fetchUMassWeather`](#5-fetchumassweather)
+  - [`fetchUCalWeather`](#6-fetchucalweather)
+  - [`writeToJSONFile`](#7-writetojsonfile)
+  - [`readFromJSONFile`](#8-readfromjsonfile)
 - [Testing](#testing)
 
 ## Description
 
-During this project, you will work as a group to complete an application that collects weather data for universities. You will query various web interfaces to collect information that will be either passed along as arguments to another interfaces or analyzed on its own.
+During this project, you will work as a group to complete an application that collects weather data for universities. You will query various web interfaces to collect information that will be either passed along as arguments to other interfaces or analyzed on its own.
+
+This assignment shifts some of the focus from implementation towards collaboration. Please try to make the most out of this assignment. Do your assigned tasks (no more - no less), work amicably with your group (meet in-person and talk with them), and learn from this experience.
+
+Between three people, and the time you are given, everyone should be able to do their part. **No one should have to pick up the slack of other group members.**
 
 ## Learning Objectives
 
 Throughout this assignment, students will learn:
 
+- How to collaborate with other programmers on a single project
 - How to combine different third-party web services into a single asynchronous application
 - How to chain and create `Promise` objects
 - How to declare and interact with `URL` and `URLSearchParam` instances
-- How to input and output to files using the asynchronous interfaces???
+- How to input and output to files using an asynchronous interfaces
 
 ## Student Expectations
 
-Students will be graded on:
+Students may be graded on:
 
+- How they collaborate with their team
 - Their ability to complete the [programming tasks](#programming-tasks) documented below
 - How they design unit-tests for all relevant functions and methods
   - See the [testing section](#testing) for how asynchronous code is tested
@@ -82,7 +90,10 @@ URLs have a specific structure, which tell both the browser, and the eventual we
 - **The scheme** documents the protocol the network request should use
   - The web uses `https` or `http`
 - **The authority** documents where server that will process our request lives
-  - The domain maps to a number (called the IP address) that is used to find the web server on the internet
+  - Consists of the domain name and the port
+    - The domain maps to a number (called the IP address) that is used to find the web server on the internet
+    - The port is a wellknown number that describes where to talk to the web server once you reach the machine
+      - Port 80 for http and 443 for https
 - **The path** describes which resource we want to retrieve
   - When the web server first gets the request it will use the path to find the resource we are requesting
 - **The parameters** describe how we want to query or provide input for that resource
@@ -97,7 +108,7 @@ Looking more closely, at the URLs above:
 - `https://www.google.com/maps` is a URL requesting the resource `/maps` at `www.google.com`
 - `https://www.google.com/search?q=how+to+exit+vim` is a URL requesting the resource `/search` at `www.google.com` providing a parameter `q` (short for query) with a value `how+to+exit+vim`
 
-If you notice, the value of the `q` parameter looks a little weird. There are some characters that cannot be part of a URL (for example, a space) and some that are reserved for a specific purpose (like `&` separating parameters). To support passing these characters to parameters, strings first need to be put into a format that can be recognized as a URL. This is called [percent encoding](https://en.wikipedia.org/wiki/Percent-encoding). Luckly, there is a class in the Node.js standard library to handle all of that for you.
+If you notice, the value of the `q` parameter looks a little weird. There are some characters that cannot be part of a URL (for example, a space) and some that are reserved for a specific purpose (like `&` separating parameters). To support passing these characters to parameters, strings first need to be put into a format that can be recognized as a URL. This is called [percent encoding](https://en.wikipedia.org/wiki/Percent-encoding). Luckily, there is a class in the Node.js standard library to handle all of that for you.
 
 During this homework, you will construct URLs with specific parameters using the `URL` class in the Node.js standard library. As an example, if I wanted to make a function that constructs a Google search URL from a given query, I would write:
 
@@ -130,7 +141,7 @@ More documentation, and examples, for the `URL` and `URLSearchParams` class can 
 
 ### Third-party APIs
 
-Source: [MDN - Instroduction to web APIs](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Introduction)
+Source: [MDN - Introduction to web APIs](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Introduction)
 
 An Application Programming Interface (**API**) is the interface exposed by an application for other pieces of software to interact with. Web APIs (APIs on the world wide web) are a popular mechanism for exposing information and providing functionality to websites or other programs. A lot of websites are just an interface for interacting with a series of web APIs. These interfaces allow developers to create complex programs without doing all the heavy lifting.
 
@@ -157,7 +168,7 @@ You will be using the `fetch` function to fetch, then parse, JSON data for the A
 ```js
 import fetch from "node-fetch";
 
-fetch("https://geocode.maps.co/search?q=University+of+Massachusetts+Amherst") // fetch the /search resource with a q parameter
+fetch("https://spire-api.melanson.dev/instructors/?search=marius") // fetch the /instructions resource with a "search" parameter
   .then((response) => response.json()) // parse the result to a json
   .then(
     (json) =>
@@ -165,15 +176,16 @@ fetch("https://geocode.maps.co/search?q=University+of+Massachusetts+Amherst") //
         ? Promise.resolve(json[0]) // Resolve with the first object if present
         : Promise.reject(new Error("No results found.")) // Reject if nothing is present
   )
-  .then((data) =>
-    console.log(
-      `UMass Amherst is located around latitude ${data.lat} and longitude ${data.lon}.`
-    )
-  )
-  .catch((err) => console.log("Unable to retrieve location data: " + err)); // Handle any errors that happened
+  .then((data) => fetch(new URL("/sections", data.url).toString()) // Fetch the associated /sections recourse for an instructor page
+  .then((res) => res.json()) // Parse the section results
+  .then((json) => console.log(`Marius Minea has taught ${json.count} different sections at UMass!`) // Do something with the final result
+  .catch((err) => console.log("Unable to retrieve location data: " + err)); // Handle any error that happened
+  // chaining promises makes errors propagate downward
 ```
 
 ## File Overview
+
+Each major function has its own individual file and corresponding testing file.
 
 ### `npm` Commands
 
@@ -194,7 +206,9 @@ fetch("https://geocode.maps.co/search?q=University+of+Massachusetts+Amherst") //
 
 ### 1. `fetchLongitudeAndLatitude`
 
-Write a function, inside of `TODO.js`, with the following type signature:
+**This function should be done individually by a single group member.**
+
+Write a function, inside of `fetchLongitudeAndLatitude.js`, with the following type signature:
 
 ```ts
 fetchLongitudeAndLatitude(query: string): Promise<{ lon: number, lat: number }>
@@ -212,7 +226,9 @@ See the [getting started section on queries](#urls-and-parameters) if you are co
 
 ### 2. `fetchWeatherData`
 
-Write a function, inside of `TODO.js`, with the following type signature:
+**This function should be done individually by a single group member.**
+
+Write a function, inside of `fetchCurrentWeather.js`, with the following type signature:
 
 ```ts
 fetchCurrentWeather(longitude: number, latitude: number): Promise<{ time: string[], temperature_2m: number[] }>
@@ -224,7 +240,9 @@ Use the <https://api.open-meteo.com/v1/forecast> API to retrieve your result. It
 
 ### 3. `fetchUniversities`
 
-Write a function, inside of `TODO.js`, with the following type signature:
+**This function should be done individually by a single group member.**
+
+Write a function, inside of `fetchUniversities.js`, with the following type signature:
 
 ```ts
 fetchUniversities(query: string): Promise<string[]>
@@ -236,37 +254,56 @@ Use the <http://universities.hipolabs.com/search> API to retrieve your result. I
 
 ### 4. `fetchAverageUniversityWeather`
 
-Write a function with the following type signature:
+**This function should be done as a group, after each member has completed their individual tasks.**
+
+Write a function with, inside of `universityWeather.js`, the following type signature:
 
 ```ts
-fetchUniversityWeather(universityQuery: string): Promise<number>
+fetchUniversityWeather(universityQuery: string): Promise<{ [key: string]: number }>
 ```
 
-This function should take in a query string and return a `Promise` that fulfils with the average temperature of all universities in the given `universityQuery` string.
+This function should take in a query string and return a `Promise` that fulfils with an object that contains the total average and individual average temperatures of all universities in the given `universityQuery` string. The total average should be in a field called `totalAverage` and the individual averages should use the name of the university as a key.
+
+As an example, if there were three universities found by the query, then the object might look something like this:
+
+```js
+{
+  totalAverage: 50,
+  "University One": 60,
+  "University Two": 40,
+  "University Three": 50
+}
+```
 
 ### 5. `fetchUMassWeather`
 
-Write a function with the following type signature:
+**This function should be done as a group, after each completing task 4.**
+
+Write a function, inside of `universityWeather.js`, with the following type signature:
 
 ```ts
-fetchUMassWeather(): Promise<number>
+fetchUMassWeather(): Promise<{ [key: string]: number }>
 ```
 
-This function should find the average temperature of all universities in the "University of Massachusetts" system. Use function 4 to compute your result.
+This function should find the average temperature of all universities in the "University of Massachusetts" system. Use the function from task 4 to compute your result.
 
 ### 6. `fetchUCalWeather`
 
-Write a function with the following type signature:
+**This function should be done as a group, after each completing task 4.**
+
+Write a function, inside of `universityWeather.js`, with the following type signature:
 
 ```ts
-fetchUCalWeather(): Promise<number>
+fetchUCalWeather(): Promise<{ [key: string]: number }>
 ```
 
-This function should find the average temperature of all universities in the "University of California" system. Use function 4 to compute your result.
+This function should find the average temperature of all universities in the "University of California" system. Use the function from task 4 to compute your result.
 
-### ?. `writeToJSONFile`
+### 7. `writeToJSONFile`
 
-Write a function, inside of `util.js`, with the following type signature:
+**This function should be researched, then completed as a group.**
+
+Write a function, inside of `fileUtility.js`, with the following type signature:
 
 ```ts
 writeToJSONFile(path: string, data: object | object[]): Promise<void>
@@ -277,9 +314,11 @@ This function should take in a file path (`path`) and some data (`data`), and re
 - [Documentation on `JSON.stringify`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify).
 - [Documentation on `writeFile` in the `fs/promises` library](https://nodejs.org/docs/latest-v17.x/api/fs.html#fspromisesreadfilepath-options).
 
-### ?. `readFromJSONFile`
+### 8. `readFromJSONFile`
 
-Write a function, inside of `util.js`, with the following type signature:
+**This function should be researched, then completed as a group.**
+
+Write a function, inside of `fileUtility.js`, with the following type signature:
 
 ```ts
 readFromJSONFile(path: string): Promise<object | object[]>
@@ -289,6 +328,20 @@ This function should take in a path to a file (assumed to be JSON data), and ret
 
 - [Documentation on `JSON.parse`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse).
 - [Documentation on `readFile` in the `fs/promises` library](https://nodejs.org/docs/latest-v17.x/api/fs.html#fspromisesreadfilepath-options).
+
+### 9. Working Example
+
+**This task should be completed as a group.**
+
+With the functions you have written above, write a small program (inside of `main.js`) that computes an interesting statistic about the weather or universities. The requirements of the program are:
+
+- It must use at least three different functions written in steps 1-8
+- The result of the program must be output somehow (either in the console or into a file)
+  - If you choose a file I/O function, it counts towards the above requirement
+- The program must be documented with what it calculates exactly
+- The program must produce a correct result according to its documentation
+
+Pick something interesting and try to have fun with it. The grading for this task will probably be lenient. As long as you meet the requirements stated above, you should receive full credit.
 
 ## Testing
 
@@ -334,6 +387,8 @@ Use what works best for you and your group members.
 ## Submitting
 
 If you see this comment, then the autograder has not been published. Please be patient.
+
+Only a single member in your group needs to submit. After submitting, that group member should click the `Add Group Members` button on the bottom right of your screen to create a group submission. After adding your group members, Gradescope will recognize that the other members have submitted the assignment. **Do not forget to include them in the final submission.**
 
 - Run `npm run prettier:fix`
 - Login to Gradescope

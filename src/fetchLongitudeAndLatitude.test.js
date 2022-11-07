@@ -1,4 +1,4 @@
-import { fetchLongitudeAndLatitude } from "./thing";
+import { fetchLongitudeAndLatitude } from "./fetchLongitudeAndLatitude";
 
 test("fetchLongitudeAndLatitude follows type specification", () => {
   return fetchLongitudeAndLatitude("University of Massachusetts Amherst").then(
