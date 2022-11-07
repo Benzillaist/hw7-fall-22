@@ -1,4 +1,4 @@
-# Homework 6B: Promises and Web Programming
+# Homework 7: Promises and Web Programming
 
 - TODO
   - Make project zip
