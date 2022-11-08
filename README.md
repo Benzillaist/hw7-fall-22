@@ -39,6 +39,7 @@ hw7-fall-22/
   - [`writeToJSONFile`](#7-writetojsonfile)
   - [`readFromJSONFile`](#8-readfromjsonfile)
 - [Testing](#testing)
+- [Submitting](#submitting)
 
 ## Description
 
@@ -364,20 +365,21 @@ Pick something interesting and try to have fun with it. The grading for this tas
 
 Testing asynchronous code is a little different from testing synchronous code. One way or another, the testing framework needs to know that there is pending work to be done. **We tell the testing framework we are still "doing" work by returning a `Promise` in the test function rather than returning nothing**.
 
-As an example, one of the given tests returns a `Promise` that has a handler that does the assertions.
+As an example, one of the given tests returns a `Promise` that has a handler that does the assertions on the result.
 
 ```js
 test("fetchLongitudeAndLatitude follows type specification", () => {
-  return fetchLongitudeAndLatitude("University of Massachusetts Amherst").then(
-    (result) => {
-      assert("lon" in result); // Assert the "lon" field is present
-      assert("lat" in result); // Assert the "lat" field is present
-      assert(Object.keys(result).length === 2); // Assert there are only two keys in the object
-
-      assert(typeof result.lon === "number"); // Assert that the lon value is a number
-      assert(typeof result.lat === "number"); // Assert that the lat value is a number
-    }
+  const promise = fetchLongitudeAndLatitude(
+    "University of Massachusetts Amherst"
   );
+  assert(typeof promise === "object" && typeof promise.then === "function");
+
+  return promise.then((result) => {
+    assert(typeof result === "object"); //  Assert the result is an object
+    assert(typeof result.lon === "number"); // Assert that the lon value is a number
+    assert(typeof result.lat === "number"); // Assert that the lat value is a number
+    assert(Object.keys(result).length === 2); // Assert there are only two keys in the object
+  });
 });
 ```
 
@@ -385,10 +387,12 @@ Your tests should follow this similar pattern (`return foo().then(result => {/* 
 
 ```js
 test("fetchLongitudeAndLatitude follows type specification", async () => {
-  const result = await fetchLongitudeAndLatitude(
+  const promise = fetchLongitudeAndLatitude(
     "University  of Massachusetts Amherst"
   );
+  assert(typeof promise === "object" && typeof promise.then === "function");
 
+  const result = await promise;
   assert(typeof result === "object"); // Assert the result is an object
   assert("lon" in result); // Assert the "lon" field is present
   assert("lat" in result); // Assert the "lat" field is present
@@ -403,7 +407,7 @@ Use what works best for you and your group members.
 
 ## Submitting
 
-If you see this comment, then the autograder has not been published. Please be patient.
+**If you see this comment, then the autograder has not been published. Please be patient.**
 
 Only a single member in your group needs to submit. After submitting, that group member should click the `Add Group Members` button on the bottom right of your screen to create a group submission. After adding your group members, Gradescope will recognize that the other members have submitted the assignment. **Do not forget to include them in the final submission.**
 
