@@ -409,6 +409,9 @@ Use what works best for you and your group members.
 
 **If you see this comment, then the autograder has not been published. Please be patient.**
 
+- There will be an intermediate due date on November 16th at 11:59PM. It will be optional, possibly extra credit. More details soon.
+- The final due date for the group submission wil be November 22nd at 6PM.
+
 Only a single member in your group needs to submit. After submitting, that group member should click the `Add Group Members` button on the bottom right of your screen to create a group submission. After adding your group members, Gradescope will recognize that the other members have submitted the assignment. **Do not forget to include them in the final submission.**
 
 - Run `npm run prettier:fix`
