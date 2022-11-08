@@ -2,7 +2,7 @@
 
 ## Notes
 
-- Please download the homework from [here](./hw7-fall-22.zip)
+- Please download the homework from [here](https://github.com/umass-compsci-220/hw7-fall-22/raw/main/hw7-fall-22.zip)
 - This project will be using Node.js and VSCode
   - Reference the [previous homeworks installation instructions](https://github.com/umass-compsci-220/hw6-fall-22/blob/main/INSTALLATION.md) if need help getting everything installed
 - After you download and unzip the project, open the folder one level higher than the `/src` folder in VSCode (File -> Open Folder)
