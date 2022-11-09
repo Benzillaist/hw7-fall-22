@@ -268,7 +268,7 @@ fetchUniversities(query: string): Promise<string[]>
 
 This function should take in a query string and return a `Promise` that fulfils with an array of university names.
 
-Use the <http://universities.hipolabs.com/search> API to retrieve your result. It has a `name` parameter to search for universities with a similar name.
+Use the <https://university-web-api.herokuapp.com/search> API to retrieve your result. It has a `name` parameter to search for universities that start with the given name.
 
 ### 4. `fetchAverageUniversityWeather`
 
@@ -369,9 +369,7 @@ As an example, one of the given tests returns a `Promise` that has a handler tha
 
 ```js
 test("fetchLongitudeAndLatitude follows type specification", () => {
-  const promise = fetchLongitudeAndLatitude(
-    "University of Massachusetts Amherst"
-  );
+  const promise = fetchLongitudeAndLatitude("University of Massachusetts Amherst");
   assert(typeof promise === "object" && typeof promise.then === "function");
 
   return promise.then((result) => {
@@ -387,9 +385,7 @@ Your tests should follow this similar pattern (`return foo().then(result => {/* 
 
 ```js
 test("fetchLongitudeAndLatitude follows type specification", async () => {
-  const promise = fetchLongitudeAndLatitude(
-    "University  of Massachusetts Amherst"
-  );
+  const promise = fetchLongitudeAndLatitude("University of Massachusetts Amherst");
   assert(typeof promise === "object" && typeof promise.then === "function");
 
   const result = await promise;
