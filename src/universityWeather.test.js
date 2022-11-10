@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import { fetchUCalWeather } from "./universityWeather";
+import { fetchUCalWeather, fetchUMassWeather } from "./universityWeather.js";
 
 test("fetchUCalWeather follows type specification", () => {
   const promise = fetchUCalWeather();
@@ -13,7 +13,7 @@ test("fetchUCalWeather follows type specification", () => {
 });
 
 test("fetchUMassWeather follows type specification", () => {
-  const promise = fetchUCalWeather();
+  const promise = fetchUMassWeather();
   assert(typeof promise === "object" && typeof promise.then === "function");
 
   return promise.then((result) => {
