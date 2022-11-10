@@ -286,6 +286,12 @@ fetchUniversityWeather(universityQuery: string): Promise<{ [key: string]: number
 
 This function should take in a query string and return a `Promise` that fulfils with an object that contains the total average and individual average temperatures of all universities in the given `universityQuery` string. The total average should be in a field called `totalAverage` and the individual averages should use the name of the university as a key.
 
+If there are no matching universities, you should reject with an error:
+
+```js
+new Error("No results found for query.");
+```
+
 As an example, if there were three universities found by the query, then the object might look something like this:
 
 ```js
