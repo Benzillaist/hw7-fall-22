@@ -172,7 +172,7 @@ You will be using the `fetch` function to fetch, then parse, JSON data for the A
 ```js
 import fetch from "node-fetch";
 
-fetch("https://spire-api.melanson.dev/instructors/?search=marius") // fetch the /instructions resource with a "search" parameter
+fetch("https://spire-api.melanson.dev/instructors/?search=marius+minea") // fetch the /instructions resource with a "search" parameter
   .then((response) => response.json()) // parse the result to a json
   .then(
     (json) =>
