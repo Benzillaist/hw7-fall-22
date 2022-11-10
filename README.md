@@ -176,15 +176,14 @@ fetch("https://spire-api.melanson.dev/instructors/?search=marius") // fetch the 
   .then((response) => response.json()) // parse the result to a json
   .then(
     (json) =>
-      json.length > 0 // This API returns an array of objects
-        ? Promise.resolve(json[0]) // Resolve with the first object if present
+      json.results.length > 0 // This API returns an object with a "results" field as an array of objects
+        ? Promise.resolve(json.results[0]) // Resolve with the first object if present, an object with a url, name, and id
         : Promise.reject(new Error("No results found.")) // Reject if nothing is present
   )
-  .then((data) => fetch(new URL("/sections", data.url).toString()) // Fetch the associated /sections recourse for an instructor page
+  .then((data) => fetch(data.url + "sections/")) // Fetch the associated /sections resource for an instructor page
   .then((res) => res.json()) // Parse the section results
-  .then((json) => console.log(`Marius Minea has taught ${json.count} different sections at UMass!`) // Do something with the final result
-  .catch((err) => console.log("Unable to retrieve location data: " + err)); // Handle any error that happened
-  // chaining promises makes errors propagate downward
+  .then((json) => console.log(`Marius Minea has taught ${json.count} different sections at UMass!`)) // Do something with the final result
+  .catch((err) => console.log("Unable to retrieve location data: " + err));
 ```
 
 ## File Overview
