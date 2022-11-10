@@ -274,7 +274,7 @@ This function should take in a query string and return a `Promise` that fulfils 
 
 Use the <https://university-web-api.herokuapp.com/search> API to retrieve your result. It has a `name` parameter to search for universities that start with the given name.
 
-### 4. `fetchAverageUniversityWeather`
+### 4. `fetchUniversityWeather`
 
 **This function should be done as a group, after each member has completed their individual tasks.**
 
