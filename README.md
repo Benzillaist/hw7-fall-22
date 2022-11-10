@@ -176,7 +176,7 @@ fetch("https://spire-api.melanson.dev/instructors/?search=marius+minea") // fetc
   .then((response) => response.json()) // parse the result to a json
   .then(
     (json) =>
-      json.results.length > 0 // This API returns an object with a "results" field as an array of objects
+      Array.isArray(json.results) && json.results.length > 0 // This API returns an object with a "results" field as an array of objects
         ? Promise.resolve(json.results[0]) // Resolve with the first object if present, an object with a url, name, and id
         : Promise.reject(new Error("No results found.")) // Reject if nothing is present
   )
