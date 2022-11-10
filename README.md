@@ -64,6 +64,9 @@ Throughout this assignment, students will learn:
 Students may be graded on:
 
 - How they collaborate with their team
+
+  - Please document which which tasks where completed individually, and which ones were done collaboratively
+
 - Their ability to complete the [programming tasks](#programming-tasks) documented below
 - How they design unit-tests for all relevant functions and methods
   - See the [testing section](#testing) for how asynchronous code is tested
@@ -244,7 +247,7 @@ See the [getting started section on queries](#urls-and-parameters) if you are co
 
 ### 2. `fetchWeatherData`
 
-**This function should be done individually by a single group member.**
+**This function should be done individually by a single group member. A different group member than the one in task 1.**
 
 Write a function, inside of `fetchCurrentWeather.js`, with the following type signature:
 
@@ -258,7 +261,7 @@ Use the <https://api.open-meteo.com/v1/forecast> API to retrieve your result. It
 
 ### 3. `fetchUniversities`
 
-**This function should be done individually by a single group member.**
+**This function should be done individually by a single group member. A different group member than the ones in task 1 and 2.**
 
 Write a function, inside of `fetchUniversities.js`, with the following type signature:
 
