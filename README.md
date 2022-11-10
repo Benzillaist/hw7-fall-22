@@ -210,7 +210,7 @@ Which is pretty long, you are are invited to add an additional script in `packag
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node ./src/main.js",
     "prettier:fix": "npx prettier --write ./src/**/*.js",
-    "test:weather": "node --experimental-vm-modules node_modules/jest/bin/jest.jsnode ./node_modules/jest ./src/fetchCurrentWeather.test.js",
+    "test:weather": "node --experimental-vm-modules node_modules/jest/bin/jest.js ./src/fetchCurrentWeather.test.js",
   },
 ```
 
