@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import { fetchCurrentWeather } from "./fetchCurrentWeather";
+import { fetchCurrentWeather } from "./fetchCurrentWeather.js";
 
 test("fetchCurrentWeather follows type specification", () => {
   const promise = fetchCurrentWeather(42.36, -71.05);

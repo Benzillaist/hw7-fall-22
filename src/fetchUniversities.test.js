@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import { fetchUniversities } from "./fetchUniversities";
+import { fetchUniversities } from "./fetchUniversities.js";
 
 test("fetchUniversities follows type specification", () => {
   const promise = fetchUniversities("University of Massachusetts Amherst");

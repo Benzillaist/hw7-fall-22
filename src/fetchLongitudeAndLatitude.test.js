@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import { fetchLongitudeAndLatitude } from "./fetchLongitudeAndLatitude";
+import { fetchLongitudeAndLatitude } from "./fetchLongitudeAndLatitude.js";
 
 test("fetchLongitudeAndLatitude follows type specification", () => {
   const promise = fetchLongitudeAndLatitude(
