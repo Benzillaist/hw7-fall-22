@@ -175,17 +175,17 @@ import path from "node:path"; // Node.js standard library for resolving arbitrar
 // Only needed in this case to join a url given by the API to another resource
 
 fetch("https://spire-api.melanson.dev/instructors/?search=marius+minea") // fetch the /instructions resource with a "search" parameter
-  .then((response) => response.json()) // parse the result to a json
+  .then(response => response.json()) // parse the result to a json
   .then(
-    (json) =>
+    json =>
       Array.isArray(json.results) && json.results.length > 0 // This API returns an object with a "results" field as an array of objects
         ? Promise.resolve(json.results[0]) // Resolve with the first object if present, an object with a url, name, and id
         : Promise.reject(new Error("No results found.")) // Reject if nothing is present
   )
-  .then((data) => fetch(path.join(data.url, "/sections/"))) // Fetch the associated /sections resource for an instructor page
-  .then((res) => res.json()) // Parse the section results
-  .then((json) => console.log(`Marius Minea has taught ${json.count} different sections at UMass!`)) // Do something with the final result
-  .catch((err) => console.log("Unable to retrieve location data: " + err));
+  .then(data => fetch(path.join(data.url, "/sections/"))) // Fetch the associated /sections resource for an instructor page
+  .then(res => res.json()) // Parse the section results
+  .then(json => console.log(`Marius Minea has taught ${json.count} different sections at UMass!`)) // Do something with the final result
+  .catch(err => console.log("Unable to retrieve location data: " + err));
 ```
 
 ## File Overview
@@ -214,6 +214,8 @@ Which is pretty long, you are are invited to add an additional script in `packag
     "test:weather": "node --experimental-vm-modules node_modules/jest/bin/jest.js ./src/fetchCurrentWeather.test.js",
   },
 ```
+
+You can run new script using the `npm run test:weather` command. `npm test` is an alias for `npm run test`.
 
 ## Resources
 
@@ -382,7 +384,7 @@ test("fetchLongitudeAndLatitude follows type specification", () => {
   const promise = fetchLongitudeAndLatitude("University of Massachusetts Amherst");
   assert(typeof promise === "object" && typeof promise.then === "function");
 
-  return promise.then((result) => {
+  return promise.then(result => {
     assert(typeof result === "object"); //  Assert the result is an object
     assert(typeof result.lon === "number"); // Assert that the lon value is a number
     assert(typeof result.lat === "number"); // Assert that the lat value is a number
