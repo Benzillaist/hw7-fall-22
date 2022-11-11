@@ -228,6 +228,17 @@ You can run new script using the `npm run test:weather` command. `npm test` is a
 
 ## Programming Tasks
 
+**Clarifications for the following tasks:**
+
+- If any `response.ok` is false, for any fetch request, you should reject
+  - <https://developer.mozilla.org/en-US/docs/Web/API/Response/ok>
+- If any `res.json()` rejects, the returned `Promise` should reject
+- If `response.ok` is true, you may assume types and fields are correct
+  - Checking is good practice, but not required.
+- `fetchLongitudeAndLatitude` should reject if the result is an empty array
+- `fetchUniversities` should **not reject** if the result array is empty
+- If any used `Promise` rejects, the returned `Promise` should reject
+
 ### 1. `fetchLongitudeAndLatitude`
 
 **This function should be done individually by a single group member.**
