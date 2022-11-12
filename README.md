@@ -285,7 +285,7 @@ fetchUniversities(query: string): Promise<string[]>
 
 This function should take in a query string and return a `Promise` that fulfils with an array of university names.
 
-Use the <https://university-web-api.herokuapp.com/search> API to retrieve your result. It has a `name` parameter to search for universities that start with the given name.
+Use the <https://university-web-api.herokuapp.com/search?name=University+of+Massachusetts> API to retrieve your result. It has a `name` parameter to search for universities that start with the given name.
 
 ### 4. `fetchUniversityWeather`
 
